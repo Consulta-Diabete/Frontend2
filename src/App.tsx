@@ -1,6 +1,6 @@
 import { useState } from "react";
-import DrugList from "./components/DrugList";
-import DrugFormModal from "./components/DrugFormModal";
+import DrugList from "./presentation/atomic/organisms/DrugList";
+import DrugFormModal from "./presentation/atomic/organisms/DrugFormModal";
 
 // Tipo para o medicamento
 interface Drug {
