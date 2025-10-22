@@ -1,9 +1,9 @@
-// src/pages/DrugsPage.tsx
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ou use window.location se não usar react-router
+import { useNavigate } from "react-router-dom";
 import DrugList from "../presentation/atomic/organisms/DrugList";
 import DrugFormModal from "../presentation/atomic/organisms/DrugFormModal";
 import { loadDrugs, saveDrugs } from "../utils/storage";
+import { useGlucose } from "../context/Glucose";
 
 export interface Drug {
   id: number;
@@ -12,29 +12,28 @@ export interface Drug {
 }
 
 export default function DrugsPage() {
-  const navigate = useNavigate(); // se usar react-router-dom
+  const navigate = useNavigate();
   const [drugs, setDrugs] = useState<Drug[]>(() => loadDrugs());
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingDrug, setEditingDrug] = useState<Drug | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  const { getCurrentUserGlucose, glucose, getGlucoseByIdRequestStatus } =
+    useGlucose();
+
   useEffect(() => {
     saveDrugs(drugs);
   }, [drugs]);
 
+  useEffect(() => {
+    getCurrentUserGlucose();
+  }, []);
+
   const handleLogout = () => {
-    // Limpa dados de autenticação
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    // Limpa qualquer outro dado de sessão que você tenha
-
-    // Redireciona para a página de login
-    // Opção 1: Com React Router
     navigate("/login");
-
-    // Opção 2: Sem React Router (recarrega a página)
-    // window.location.href = '/login';
   };
 
   const handleAddDrug = (title: string) => {

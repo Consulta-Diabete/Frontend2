@@ -1,12 +1,10 @@
 import { type FormEvent, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Button from "../presentation/atomic/atoms/Button";
 import Input from "../presentation/atomic/atoms/Input";
 
 export default function Login() {
-  const { login } = useAuth();
-  const nav = useNavigate();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,8 +16,7 @@ export default function Login() {
     setErr(null);
     setLoading(true);
     try {
-      await login(email, pass);
-      nav("/");
+      await signIn({ email, password: pass, name: "" });
     } catch (e: any) {
       setErr(e.message ?? "Falha ao entrar");
     } finally {
