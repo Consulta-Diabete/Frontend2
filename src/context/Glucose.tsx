@@ -43,13 +43,11 @@ export const GlucoseProvider = ({ children }: GlucoseProviderProps) => {
     setGetGlucoseByIdRequestStatus({
       status: "pending",
     });
+
+    const id = sessionUser?.id;
+
     try {
-      const response = await api.get(`/glucose/get`, {
-        params: {
-          // UserId: sessionUser?.id,
-          userId: "a342b80c-ae92-4f07-b0f6-526e2216817c",
-        },
-      });
+      const response = await api.get(`/glucose/get/${id}`, {});
       setGlucose(response.data);
       setGetGlucoseByIdRequestStatus({
         status: "succeeded",
@@ -72,11 +70,12 @@ export const GlucoseProvider = ({ children }: GlucoseProviderProps) => {
     }
   };
 
-  const createGlucose = async () => {
+  const createGlucose = async (data: GlucoseRequest) => {
     setCreateGlucoseRequestStatus({ status: "pending" });
 
     try {
-      await api.post("glucose/create");
+      await api.post("glucose/create", data);
+
       setCreateGlucoseRequestStatus({ status: "succeeded" });
     } catch (error: any) {
       const message =

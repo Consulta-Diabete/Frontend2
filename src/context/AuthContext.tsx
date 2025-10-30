@@ -88,11 +88,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       const response = await api.post("/auth/login", data);
-      console.log("entrei 2 " + response);
+      console.log(response.data);
 
       setRequestStatus({ status: "succeeded", message: "" });
 
-      const token: string | undefined = response?.data?.token;
+      const token: string | undefined = response?.data?.accessToken;
 
       console.log("🔐 TOKEN RECEBIDO:", token);
       if (!token) throw new Error("Token não retornado pelo servidor.");
@@ -100,9 +100,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const decoded = decodeJwt<AuthTokenResponse>(token);
       console.log("🧩 TOKEN DECODED:", decoded);
 
-      if (!decoded?.user?.id) throw new Error("Payload do token inválido.");
+      console.log(decoded.id);
 
-      const userDto: AuthTokenDTO = { id: decoded.user.id };
+      if (!decoded?.id) throw new Error("Payload do token inválido.");
+
+      const userDto: AuthTokenDTO = { id: decoded.id };
 
       setSessionUser(userDto);
       setSession(token);

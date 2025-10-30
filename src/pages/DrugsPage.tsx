@@ -19,8 +19,13 @@ export default function DrugsPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const { getCurrentUserGlucose, glucose, getGlucoseByIdRequestStatus } =
-    useGlucose();
+  const {
+    getCurrentUserGlucose,
+    glucose,
+    getGlucoseByIdRequestStatus,
+    createGlucose,
+    createGlucoseRequestStatus,
+  } = useGlucose();
 
   useEffect(() => {
     saveDrugs(drugs);
@@ -33,18 +38,11 @@ export default function DrugsPage() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    navigate("/login");
+    navigate("/");
   };
 
   const handleAddDrug = (title: string) => {
-    setDrugs((prev) =>
-      editingDrug
-        ? prev.map((d) => (d.id === editingDrug.id ? { ...d, title } : d))
-        : [
-            ...prev,
-            { id: Date.now(), title, createdAt: new Date().toISOString() },
-          ]
-    );
+    createGlucose();
     setEditingDrug(null);
     setModalOpen(false);
   };

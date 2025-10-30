@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Button from "../presentation/atomic/atoms/Button";
 import Input from "../presentation/atomic/atoms/Input";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -11,12 +12,15 @@ export default function Login() {
   const [err, setErr] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setErr(null);
     setLoading(true);
     try {
       await signIn({ email, password: pass, name: "" });
+      navigate("/drugs");
     } catch (e: any) {
       setErr(e.message ?? "Falha ao entrar");
     } finally {

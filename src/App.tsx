@@ -2,7 +2,6 @@ import { useState } from "react";
 import DrugList from "./presentation/atomic/organisms/DrugList";
 import DrugFormModal from "./presentation/atomic/organisms/DrugFormModal";
 
-// Tipo para o medicamento
 interface Drug {
   id: number;
   title: string;
