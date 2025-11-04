@@ -18,6 +18,9 @@ interface GlucoseContextProps {
 
   createGlucose: (data: GlucoseRequest) => Promise<void>;
   createGlucoseRequestStatus: RequestStatus;
+
+  deleteGlucose: (id: string) => Promise<void>;
+  deleteGlucoseRequestStatus: RequestStatus;
 }
 
 const GlucoseContext = createContext<GlucoseContextProps>(
@@ -39,6 +42,9 @@ export const GlucoseProvider = ({ children }: GlucoseProviderProps) => {
   const [createGlucoseRequestStatus, setCreateGlucoseRequestStatus] =
     useState<RequestStatus>({ status: "idle" });
 
+  const [deleteGlucoseRequestStatus, setDeleteGlucoseRequestStatus] =
+    useState<RequestStatus>({ status: "idle" });
+
   const getCurrentUserGlucose = async () => {
     setGetGlucoseByIdRequestStatus({
       status: "pending",
@@ -47,11 +53,13 @@ export const GlucoseProvider = ({ children }: GlucoseProviderProps) => {
     const id = sessionUser?.id;
 
     try {
-      const response = await api.get(`/glucose/get/${id}`, {});
+      const response = await api.get(`/glucose/get/${id}`);
       setGlucose(response.data);
       setGetGlucoseByIdRequestStatus({
         status: "succeeded",
       });
+      console.log(response.data);
+
       return response.data;
     } catch (error: any) {
       const message =
@@ -81,6 +89,26 @@ export const GlucoseProvider = ({ children }: GlucoseProviderProps) => {
       const message =
         error?.message || error?.code || "Erro inesperado. Tente novamente.";
       setCreateGlucoseRequestStatus({ status: "failed", message });
+      console.log(error.response.data);
+
+      alert(message);
+    }
+  };
+
+  const deleteGlucose = async (id: string) => {
+    setDeleteGlucoseRequestStatus({ status: "pending" });
+
+    try {
+      await api.delete(`/glucose/delete/${id}`);
+
+      setDeleteGlucoseRequestStatus({ status: "succeeded" });
+    } catch (error: any) {
+      const message =
+        error?.message || error?.code || "Erro inesperado. Tente novamente.";
+      setDeleteGlucoseRequestStatus({ status: "failed", message });
+
+      console.log(error.response.data);
+
       alert(message);
     }
   };
@@ -93,6 +121,8 @@ export const GlucoseProvider = ({ children }: GlucoseProviderProps) => {
         createGlucose,
         createGlucoseRequestStatus,
         getGlucoseByIdRequestStatus,
+        deleteGlucose,
+        deleteGlucoseRequestStatus,
       }}
     >
       {children}

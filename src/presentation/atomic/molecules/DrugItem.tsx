@@ -1,20 +1,22 @@
 import Button from "../atoms/Button";
 
 export interface Drug {
-  id: number;
-  title: string;
+  id: string;
+  glucose: number;
+  meassurementTime: string;
+  createdAt?: string;
 }
 
 interface DrugItemProps {
   drug: Drug;
   onEdit: (drug: Drug) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function DrugItem({ drug, onEdit, onDelete }: DrugItemProps) {
   return (
     <div className="card item">
-      <span className="title">{drug.title}</span>
+      <span className="title">{drug.meassurementTime}</span>{" "}
       <div className="actions">
         <Button size="sm" onClick={() => onEdit(drug)}>
           Editar

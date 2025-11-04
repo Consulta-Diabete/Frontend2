@@ -2,37 +2,45 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DrugList from "../presentation/atomic/organisms/DrugList";
 import DrugFormModal from "../presentation/atomic/organisms/DrugFormModal";
-import { loadDrugs, saveDrugs } from "../utils/storage";
 import { useGlucose } from "../context/Glucose";
+import { useAuth } from "../context/AuthContext";
 
 export interface Drug {
-  id: number;
-  title: string;
+  id: string;
+  glucose: number;
+  meassurementTime: string;
   createdAt?: string;
 }
 
 export default function DrugsPage() {
   const navigate = useNavigate();
-  const [drugs, setDrugs] = useState<Drug[]>(() => loadDrugs());
+  const [drugs, setDrugs] = useState<Drug[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingDrug, setEditingDrug] = useState<Drug | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const {
-    getCurrentUserGlucose,
-    glucose,
-    getGlucoseByIdRequestStatus,
-    createGlucose,
-    createGlucoseRequestStatus,
-  } = useGlucose();
+  const { getCurrentUserGlucose, createGlucose, deleteGlucose } = useGlucose();
+  const { sessionUser } = useAuth();
+
+  const normalizeDrugs = (response: any): Drug[] => {
+    if (!Array.isArray(response)) return [];
+    return response.map((item) => ({
+      id: item.id,
+      glucose: item.glucose,
+      meassurementTime: item.meassurementTime,
+      createdAt: item.createdAt || new Date().toISOString(),
+    }));
+  };
 
   useEffect(() => {
-    saveDrugs(drugs);
-  }, [drugs]);
+    async function fetchDrugs() {
+      const response = await getCurrentUserGlucose();
+      const normalized = normalizeDrugs(response);
+      setDrugs(normalized);
+    }
 
-  useEffect(() => {
-    getCurrentUserGlucose();
+    fetchDrugs();
   }, []);
 
   const handleLogout = () => {
@@ -41,10 +49,21 @@ export default function DrugsPage() {
     navigate("/");
   };
 
-  const handleAddDrug = (title: string) => {
-    createGlucose();
-    setEditingDrug(null);
-    setModalOpen(false);
+  const handleAddDrug = async (glucose: number, meassurementTime: string) => {
+    const userId = sessionUser?.id || "";
+
+    try {
+      await createGlucose({ glucose, meassurementTime, userId });
+
+      const response = await getCurrentUserGlucose();
+      const normalized = normalizeDrugs(response);
+      setDrugs(normalized);
+
+      setEditingDrug(null);
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Erro ao adicionar glicose:", error);
+    }
   };
 
   const handleEdit = (drug: Drug) => {
@@ -52,14 +71,21 @@ export default function DrugsPage() {
     setModalOpen(true);
   };
 
-  const handleDeleteConfirm = (id: number) => {
+  const handleDeleteConfirm = (id: string) => {
     setDeletingId(id);
   };
 
-  const handleDelete = () => {
-    if (deletingId) {
-      setDrugs((d) => d.filter((x) => x.id !== deletingId));
-      setDeletingId(null);
+  const handleDelete = async () => {
+    if (deletingId !== null) {
+      try {
+        await deleteGlucose(deletingId);
+
+        setDrugs((d) => d.filter((x) => x.id !== deletingId));
+
+        setDeletingId(null);
+      } catch (error) {
+        console.error("Erro ao deletar glicose:", error);
+      }
     }
   };
 
@@ -68,8 +94,8 @@ export default function DrugsPage() {
       <div className="content-wrapper">
         <header className="page-header">
           <div className="header-content">
-            <h1>💊 Medicamentos</h1>
-            <p className="subtitle">Gerencie sua lista de medicamentos</p>
+            <h1>💊 Glicoses</h1>
+            <p className="subtitle">Gerencie sua lista de glicoses</p>
           </div>
           <div className="header-actions">
             <button
@@ -80,7 +106,7 @@ export default function DrugsPage() {
               }}
             >
               <span className="btn-icon">+</span>
-              Adicionar Medicamento
+              Adicionar Glicose
             </button>
             <button
               className="btn-logout"
@@ -96,9 +122,9 @@ export default function DrugsPage() {
         {drugs.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">💊</div>
-            <h2 className="empty-state-title">Nenhum medicamento cadastrado</h2>
+            <h2 className="empty-state-title">Nenhuma glicose cadastrada</h2>
             <p className="empty-state-description">
-              Comece adicionando seu primeiro medicamento à lista
+              Comece adicionando sua primeira glicose à lista
             </p>
             <button
               className="btn-primary"
@@ -108,7 +134,7 @@ export default function DrugsPage() {
               }}
             >
               <span className="btn-icon">+</span>
-              Adicionar Primeiro Medicamento
+              Adicionar Primeira Glicose
             </button>
           </div>
         ) : (
@@ -123,7 +149,8 @@ export default function DrugsPage() {
           <DrugFormModal
             onClose={() => setModalOpen(false)}
             onSubmit={handleAddDrug}
-            initialTitle={editingDrug?.title ?? ""}
+            glucose={editingDrug?.glucose}
+            meassurementTime={editingDrug?.meassurementTime}
           />
         )}
 
@@ -138,7 +165,7 @@ export default function DrugsPage() {
               </div>
               <div className="modal-body">
                 <p>
-                  Tem certeza que deseja excluir este medicamento? Esta ação não
+                  Tem certeza que deseja excluir esta glicose? Esta ação não
                   pode ser desfeita.
                 </p>
               </div>

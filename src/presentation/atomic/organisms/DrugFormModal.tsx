@@ -4,22 +4,27 @@ import Input from "../atoms/Input";
 
 interface DrugFormModalProps {
   onClose: () => void;
-  onSubmit: (title: string) => void;
-  initialTitle?: string;
+  onSubmit: (glucose: number, meassurementTime: string) => void;
+  glucose?: number;
+  meassurementTime?: string;
 }
 
 export default function DrugFormModal({
   onClose,
   onSubmit,
-  initialTitle = "",
+  glucose = 0,
+  meassurementTime = "",
 }: DrugFormModalProps) {
-  const [title, setTitle] = useState("");
+  const [glucoseNumber, setGlucoseNumber] = useState(0);
+  const [meassurementTimeHour, setMeassurementTimeHour] = useState("");
+
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setTitle(initialTitle);
-  }, [initialTitle]);
+    setGlucoseNumber(glucose);
+    setMeassurementTimeHour(meassurementTime);
+  }, [glucose, meassurementTime]);
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -36,8 +41,9 @@ export default function DrugFormModal({
   };
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    const value = title.trim();
-    if (value) onSubmit(value);
+    if (glucoseNumber && meassurementTimeHour.trim()) {
+      onSubmit(glucoseNumber, meassurementTimeHour.trim());
+    }
   };
 
   return (
@@ -50,15 +56,23 @@ export default function DrugFormModal({
     >
       <div className="modal" onMouseDown={(e) => e.stopPropagation()}>
         <h2 style={{ marginTop: 0 }}>
-          {initialTitle ? "Editar Medicamento" : "Novo Medicamento"}
+          {meassurementTimeHour ? "Editar Glicemia" : "Nova Glicemia"}
         </h2>
 
         <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
           <Input
             itemRef={inputRef as any}
-            placeholder="Nome do medicamento"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Glicemia"
+            value={glucoseNumber}
+            onChange={(e) => setGlucoseNumber(Number(e.target.value))}
+          />
+
+          <Input
+            itemRef={inputRef as any}
+            placeholder="Hora da Medição"
+            value={meassurementTimeHour}
+            onChange={(e) => setMeassurementTimeHour(e.target.value)}
+            style={{ textTransform: "capitalize" }}
           />
 
           <div
@@ -66,7 +80,7 @@ export default function DrugFormModal({
             style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}
           >
             <Button type="submit" variant="primary">
-              {initialTitle ? "Salvar" : "Cadastrar"}
+              {meassurementTimeHour ? "Salvar" : "Cadastrar"}
             </Button>
             <Button type="button" variant="secondary" onClick={onClose}>
               Cancelar

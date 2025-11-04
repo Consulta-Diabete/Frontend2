@@ -3,7 +3,7 @@ import DrugItem, { type Drug } from "../molecules/DrugItem";
 interface DrugListProps {
   drugs: Drug[];
   onEdit: (drug: Drug) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function DrugList({ drugs, onEdit, onDelete }: DrugListProps) {
