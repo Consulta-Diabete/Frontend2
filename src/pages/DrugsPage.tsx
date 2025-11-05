@@ -4,6 +4,8 @@ import DrugList from "../presentation/atomic/organisms/DrugList";
 import DrugFormModal from "../presentation/atomic/organisms/DrugFormModal";
 import { useGlucose } from "../context/Glucose";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPills } from "@fortawesome/free-solid-svg-icons";
 
 export interface Drug {
   id: string;
@@ -94,8 +96,19 @@ export default function DrugsPage() {
       <div className="content-wrapper">
         <header className="page-header">
           <div className="header-content">
-            <h1>💊 Glicoses</h1>
-            <p className="subtitle">Gerencie sua lista de glicoses</p>
+            <h1>
+              {" "}
+              <img
+                src="https://aquamarine-hornet-945619.hostingersite.com/wp-content/uploads/2025/10/59b67dc0-c292-4c60-92bb-9693854710d4-removebg-preview.png"
+                alt="Logo"
+                className="login-logo"
+                style={{ width: "80px", height: "auto", marginRight: "8px" }}
+              />
+              Glicoses
+            </h1>
+            <p className="subtitle" style={{ paddingLeft: "24px" }}>
+              Gerencie sua lista de glicoses
+            </p>
           </div>
           <div className="header-actions">
             <button
@@ -121,7 +134,6 @@ export default function DrugsPage() {
 
         {drugs.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">💊</div>
             <h2 className="empty-state-title">Nenhuma glicose cadastrada</h2>
             <p className="empty-state-description">
               Comece adicionando sua primeira glicose à lista

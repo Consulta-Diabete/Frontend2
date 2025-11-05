@@ -1,37 +1,43 @@
 /* src/styles/theme.css */
 
 :root {
-    /* Colors */
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --bg-accent: #ff9c4a;
-    --bg-accent-hover: #ff8833;
+    --bg-primary: #0E1525;
+    /* Fundo geral */
+    --bg-secondary: #121826;
+    /* Superfície */
+    --bg-tertiary: #1E2739;
+    /* Divisores sutis */
+    --bg-accent: #1E7BEF;
+    --bg-accent-hover: #1E7BEF;
 
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
+    --text-primary: #F7F3EE;
+    /* Texto claro */
+    --text-secondary: #D0E1FF;
+    /* Azul claro secundário */
+    --text-muted: #A0AEC0;
+    /* Texto apagado */
 
-    --border-primary: #334155;
-    --border-secondary: #475569;
+    --border-primary: #1E2739;
+    --border-secondary: #2B364B;
 
-    --primary: #22d3ee;
-    --primary-hover: #06b6d4;
-    --primary-light: #67e8f9;
-    --primary-dark: #0891b2;
+    --primary: #1E7BEF;
+    /* Mantém o azul primário */
+    --primary-hover: #5298F3;
+    --primary-light: #A7CBFF;
+    --primary-dark: #1765C4;
 
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
+    --success: #2F9E44;
+    --warning: #F59F00;
+    --danger: #E03131;
+    --danger-hover: #C12525;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
-    /* Spacing */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+
+
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
@@ -39,14 +45,14 @@
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
 
-    /* Border Radius */
+
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
     --radius-lg: 0.75rem;
     --radius-xl: 1rem;
     --radius-full: 9999px;
 
-    /* Transitions */
+
     --transition-fast: 150ms ease-in-out;
     --transition-base: 200ms ease-in-out;
     --transition-slow: 300ms ease-in-out;
@@ -63,7 +69,7 @@ body {
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    background: linear-gradient(90deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
     color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.6;

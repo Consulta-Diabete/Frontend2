@@ -42,9 +42,6 @@ export default function Login() {
         {/* Left Side - Branding */}
         <div className="login-brand-section">
           <div className="brand-content">
-            <div className="brand-icon-wrapper">
-              <span className="brand-icon">💊</span>
-            </div>
             <h1 className="brand-title">Sistema de Medicamentos</h1>
             <p className="brand-description">
               Gerencie seus medicamentos de forma simples, segura e eficiente
@@ -72,7 +69,7 @@ export default function Login() {
             <div className="login-header">
               <div className="login-logo-wrapper">
                 <img
-                  src="https://aquamarine-hornet-945619.hostingersite.com/wp-content/uploads/2025/10/unnamed-removebg-preview.png"
+                  src="https://aquamarine-hornet-945619.hostingersite.com/wp-content/uploads/2025/10/59b67dc0-c292-4c60-92bb-9693854710d4-removebg-preview.png"
                   alt="Logo"
                   className="login-logo"
                 />
