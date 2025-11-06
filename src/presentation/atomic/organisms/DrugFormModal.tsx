@@ -64,6 +64,7 @@ export default function DrugFormModal({
             itemRef={inputRef as any}
             placeholder="Glicemia"
             value={glucoseNumber}
+            type="number"
             onChange={(e) => setGlucoseNumber(Number(e.target.value))}
           />
 

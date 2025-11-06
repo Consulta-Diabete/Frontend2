@@ -16,7 +16,8 @@ interface DrugItemProps {
 export default function DrugItem({ drug, onEdit, onDelete }: DrugItemProps) {
   return (
     <div className="card item">
-      <span className="title">{drug.meassurementTime}</span>{" "}
+      <span className="title">Número da Glicose: {drug.glucose}</span>{" "}
+      <span className="glucose">Horário: {drug.meassurementTime}</span>{" "}
       <div className="actions">
         <Button size="sm" onClick={() => onEdit(drug)}>
           Editar

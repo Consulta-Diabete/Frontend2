@@ -4,8 +4,6 @@ import DrugList from "../presentation/atomic/organisms/DrugList";
 import DrugFormModal from "../presentation/atomic/organisms/DrugFormModal";
 import { useGlucose } from "../context/Glucose";
 import { useAuth } from "../context/AuthContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPills } from "@fortawesome/free-solid-svg-icons";
 
 export interface Drug {
   id: string;
@@ -22,7 +20,8 @@ export default function DrugsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const { getCurrentUserGlucose, createGlucose, deleteGlucose } = useGlucose();
+  const { getCurrentUserGlucose, createGlucose, deleteGlucose, updateGlucose } =
+    useGlucose();
   const { sessionUser } = useAuth();
 
   const normalizeDrugs = (response: any): Drug[] => {
@@ -51,11 +50,18 @@ export default function DrugsPage() {
     navigate("/");
   };
 
-  const handleAddDrug = async (glucose: number, meassurementTime: string) => {
+  const handleAddOrUpdateDrug = async (
+    glucose: number,
+    meassurementTime: string
+  ) => {
     const userId = sessionUser?.id || "";
 
     try {
-      await createGlucose({ glucose, meassurementTime, userId });
+      if (editingDrug) {
+        await updateGlucose({ glucose, meassurementTime }, editingDrug.id);
+      } else {
+        await createGlucose({ glucose, meassurementTime, userId });
+      }
 
       const response = await getCurrentUserGlucose();
       const normalized = normalizeDrugs(response);
@@ -64,7 +70,7 @@ export default function DrugsPage() {
       setEditingDrug(null);
       setModalOpen(false);
     } catch (error) {
-      console.error("Erro ao adicionar glicose:", error);
+      console.error("Erro ao salvar glicose:", error);
     }
   };
 
@@ -159,8 +165,11 @@ export default function DrugsPage() {
 
         {isModalOpen && (
           <DrugFormModal
-            onClose={() => setModalOpen(false)}
-            onSubmit={handleAddDrug}
+            onClose={() => {
+              setModalOpen(false);
+              setEditingDrug(null);
+            }}
+            onSubmit={handleAddOrUpdateDrug}
             glucose={editingDrug?.glucose}
             meassurementTime={editingDrug?.meassurementTime}
           />
