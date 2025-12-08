@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DrugList from "../presentation/atomic/organisms/DrugList";
-import DrugFormModal from "../presentation/atomic/organisms/DrugFormModal";
-import { useGlucose } from "../context/Glucose";
 import { useAuth } from "../context/AuthContext";
+import { useGlucose } from "../context/Glucose";
+import DrugFormModal from "../presentation/atomic/organisms/DrugFormModal";
+import DrugList from "../presentation/atomic/organisms/DrugList";
 
 export interface Drug {
   id: string;
@@ -22,7 +22,7 @@ export default function DrugsPage() {
 
   const { getCurrentUserGlucose, createGlucose, deleteGlucose, updateGlucose } =
     useGlucose();
-  const { sessionUser } = useAuth();
+  const { sessionUser, signOut } = useAuth();
 
   const normalizeDrugs = (response: any): Drug[] => {
     if (!Array.isArray(response)) return [];
@@ -45,8 +45,7 @@ export default function DrugsPage() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
+    signOut();
     navigate("/");
   };
 

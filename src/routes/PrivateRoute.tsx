@@ -1,12 +1,20 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import type { JSX } from "react";
 
-export default function PrivateRoute({ children }: { children: JSX.Element }) {
-  const { sessionUser, requestStatus } = useAuth();
-  if (requestStatus.status === "pending") {
-    return null;
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
+
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { sessionUser, isAuthLoading } = useAuth();
+
+  if (isAuthLoading) {
+    return <div>Carregando...</div>;
   }
 
-  return sessionUser ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!sessionUser) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 }

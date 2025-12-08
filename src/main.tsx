@@ -1,15 +1,23 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./styles/theme.css";
 import { AuthProvider } from "./context/AuthContext";
+import { GlucoseProvider } from "./context/Glucose";
 import DrugsPage from "./pages/DrugsPage";
 import Login from "./pages/Login";
-import { GlucoseProvider } from "./context/Glucose";
+import { ProtectedRoute } from "./routes/PrivateRoute";
+import "./styles/theme.css";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
-  { path: "/drugs", element: <DrugsPage /> },
+  {
+    path: "/drugs",
+    element: (
+      <ProtectedRoute>
+        <DrugsPage />
+      </ProtectedRoute>
+    ),
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(

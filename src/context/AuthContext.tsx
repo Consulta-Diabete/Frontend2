@@ -6,16 +6,16 @@ import {
   type ReactNode,
 } from "react";
 import type { AuthRequest } from "../model/auth/auth-request";
-import type { RequestStatus } from "../model/request-status";
 import type { AuthTokenDTO } from "../model/auth/auth-token-response-dto";
+import type { AuthTokenResponse } from "../model/auth/auth-token.response";
+import type { RequestStatus } from "../model/request-status";
+import { api } from "../service/axios";
+import { decodeJwt } from "../service/jwt-decode";
 import {
+  deleteItemAsync,
   getItemAsync,
   setItemAsync,
-  deleteItemAsync,
 } from "../utils/useStorageState";
-import { api } from "../service/axios";
-import type { AuthTokenResponse } from "../model/auth/auth-token.response";
-import { decodeJwt } from "../service/jwt-decode";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -27,6 +27,7 @@ interface AuthContextProps {
   sessionUser: AuthTokenDTO | null;
   requestStatus: RequestStatus;
   session?: string | null;
+  isAuthLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -37,6 +38,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [sessionUser, setSessionUser] = useState<AuthTokenDTO | null>(null);
   const [session, setSession] = useState<string | null>(null);
 
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
   const [requestStatus, setRequestStatus] = useState<RequestStatus>({
     message: "",
     status: "idle",
@@ -44,6 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       try {
         const [storedToken, storedUserJson] = await Promise.all([
@@ -56,24 +60,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (storedToken) {
           setSession(storedToken);
           api.defaults.headers.common.Authorization = `Bearer ${storedToken}`;
-        } else {
-          delete api.defaults.headers.common.Authorization;
         }
 
         if (storedUserJson) {
-          try {
-            const parsed = JSON.parse(storedUserJson) as AuthTokenDTO;
-            setSessionUser(parsed);
-          } catch {
-            setSessionUser(null);
-          }
-        } else {
-          setSessionUser(null);
+          setSessionUser(JSON.parse(storedUserJson));
         }
       } catch {
         setSession(null);
         setSessionUser(null);
         delete api.defaults.headers.common.Authorization;
+      } finally {
+        if (mounted) setIsAuthLoading(false);
       }
     })();
 
@@ -141,7 +138,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ signIn, signOut, sessionUser, requestStatus, session }}
+      value={{
+        signIn,
+        signOut,
+        sessionUser,
+        requestStatus,
+        session,
+        isAuthLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>
