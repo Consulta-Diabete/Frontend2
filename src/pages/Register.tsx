@@ -1,11 +1,12 @@
 import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useUser } from "../context/RegisterContext";
 import Button from "../presentation/atomic/atoms/Button";
 import Input from "../presentation/atomic/atoms/Input";
 
-export default function Login() {
-  const { signIn } = useAuth();
+export default function Register() {
+  const { createUser } = useUser();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,10 +20,10 @@ export default function Login() {
     setErr(null);
     setLoading(true);
     try {
-      await signIn({ email, password: pass, name: "" });
-      navigate("/drugs");
+      await createUser({ email, password: pass, name: name });
+      navigate("/login");
     } catch (e: any) {
-      setErr(e.message ?? "Falha ao entrar");
+      setErr(e.message ?? "Falha ao cadastrar");
     } finally {
       setLoading(false);
     }
@@ -65,13 +66,33 @@ export default function Login() {
                   className="login-logo"
                 />
               </div>
-              <h2 className="login-title">Login</h2>
+              <h2 className="login-title">Cadastra-se</h2>
               <p className="login-subtitle">
-                Entre com suas credenciais para continuar
+                Cadastre as credenciais para continuar
               </p>
             </div>
 
             <form onSubmit={onSubmit} className="login-form">
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
+                  Nome
+                </label>
+                <div className="input-wrapper">
+                  <span className="input-icon">✏️</span>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Seu nome"
+                    className="input input-with-icon"
+                    required
+                    autoComplete="name"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   E-mail
@@ -126,25 +147,25 @@ export default function Login() {
               {err && (
                 <div className="error-message" role="alert">
                   <span className="error-icon">⚠️</span>
-                  <span>Senha ou E-mail Inválidos</span>
+                  <span>{err}</span>
                 </div>
               )}
 
               <Button
                 variant="primary"
                 type="submit"
-                disabled={loading || !email || !pass}
+                disabled={loading || !email || !pass || !name}
                 size="md"
                 className="btn-primary btn-login"
               >
                 {loading ? (
                   <>
                     <span className="loading-spinner"></span>
-                    Entrando...
+                    Cadastrando...
                   </>
                 ) : (
                   <>
-                    <span>Entrar</span>
+                    <span>Cadastrar</span>
                     <span className="btn-arrow">→</span>
                   </>
                 )}
@@ -157,9 +178,9 @@ export default function Login() {
                 type="button"
                 size="md"
                 className="btn-secondary btn-register"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/")}
               >
-                <span> Não tem uma conta? Cadastre-se</span>
+                <span> Já tem conta? Entre</span>
               </Button>
             </div>
           </div>

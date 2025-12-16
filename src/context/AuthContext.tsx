@@ -117,10 +117,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error: any) {
       console.log("deu erroooo aquiiii");
 
-      const message =
-        error?.message || error?.code || "Erro inesperado. Tente novamente.";
+      const message = "Erro inesperado. Tente novamente.";
       setRequestStatus({ status: "failed", message });
-      alert(message);
       setRequestStatus({ status: "idle", message: "" });
       throw error;
     }
