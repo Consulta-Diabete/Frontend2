@@ -21,7 +21,7 @@ export default function Register() {
     setLoading(true);
     try {
       await createUser({ email, password: pass, name: name });
-      navigate("/login");
+      navigate("/");
     } catch (e: any) {
       setErr(e.message ?? "Falha ao cadastrar");
     } finally {
